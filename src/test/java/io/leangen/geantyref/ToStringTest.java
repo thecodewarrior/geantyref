@@ -43,8 +43,8 @@ public class ToStringTest {
 
     @Test
     public void parameterizedTypeTest() {
-        AnnotatedType annString = TypeFactory.parameterizedAnnotatedClass(String.class, new Annotation[] {a2});
-        AnnotatedType type = TypeFactory.parameterizedAnnotatedClass(List.class, new Annotation[] {a1}, annString);
+        AnnotatedType annString = TypeFactory.parameterizedAnnotatedClass(null, String.class, new Annotation[] {a2});
+        AnnotatedType type = TypeFactory.parameterizedAnnotatedClass(null, List.class, new Annotation[] {a1}, annString);
         assertEquals("@io.leangen.geantyref.ToStringTest$A1(key=Magic Key, value=123) " +
                 "java.util.List<@io.leangen.geantyref.ToStringTest$A2(meta=Meta Data, " +
                 "target=@io.leangen.geantyref.ToStringTest$A1(key=Magic Key, value=123)) java.lang.String>", type.toString());
@@ -61,7 +61,7 @@ public class ToStringTest {
 
     @Test
     public void arrayTypeTest() {
-        AnnotatedType componentType = TypeFactory.parameterizedAnnotatedClass(String.class, new Annotation[] {a1});
+        AnnotatedType componentType = TypeFactory.parameterizedAnnotatedClass(null, String.class, new Annotation[] {a1});
         AnnotatedType arrayType = TypeFactory.arrayOf(componentType, new Annotation[] {a1});
         assertEquals("@io.leangen.geantyref.ToStringTest$A1(key=Magic Key, value=123) " +
                 "java.lang.String @io.leangen.geantyref.ToStringTest$A1(key=Magic Key, value=123) []", arrayType.toString());
@@ -81,12 +81,12 @@ public class ToStringTest {
     public void wildcardTypeTest() {
         WildcardType wild = (WildcardType) ((ParameterizedType)(new TypeToken<Class<? extends Number>>(){}.getType()))
                 .getActualTypeArguments()[0];
-        AnnotatedType[] upperBounds = new AnnotatedType[] {TypeFactory.parameterizedAnnotatedClass(Number.class, new Annotation[] {a1})};
+        AnnotatedType[] upperBounds = new AnnotatedType[] {TypeFactory.parameterizedAnnotatedClass(null, Number.class, new Annotation[] {a1})};
         AnnotatedType type = new AnnotatedWildcardTypeImpl(wild, new Annotation[]{}, null, upperBounds);
         assertEquals("? extends @io.leangen.geantyref.ToStringTest$A1(key=Magic Key, value=123) java.lang.Number", type.toString());
         wild = (WildcardType) ((ParameterizedType)(new TypeToken<Class<? super Number>>(){}.getType()))
                 .getActualTypeArguments()[0];
-        AnnotatedType[] lowerBounds = new AnnotatedType[] {TypeFactory.parameterizedAnnotatedClass(Number.class, new Annotation[] {a1})};
+        AnnotatedType[] lowerBounds = new AnnotatedType[] {TypeFactory.parameterizedAnnotatedClass(null, Number.class, new Annotation[] {a1})};
         type = new AnnotatedWildcardTypeImpl(wild, new Annotation[]{}, lowerBounds, null);
         assertEquals("? super @io.leangen.geantyref.ToStringTest$A1(key=Magic Key, value=123) java.lang.Number", type.toString());
     }
