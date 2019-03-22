@@ -461,7 +461,7 @@ public class GenericTypeReflector {
     public static AnnotatedType getArrayComponentType(AnnotatedType type) {
         if (type.getType() instanceof Class) {
             Class<?> clazz = (Class<?>)type.getType();
-            return new AnnotatedTypeImpl(clazz.getComponentType(), clazz.getAnnotations());
+            return new AnnotatedTypeImpl(clazz.getComponentType(), new Annotation[0]);
         } else if (type instanceof AnnotatedArrayType) {
             AnnotatedArrayType aType = (AnnotatedArrayType) type;
             return aType.getAnnotatedGenericComponentType();
@@ -847,10 +847,9 @@ public class GenericTypeReflector {
             ParameterizedType parameterized = (ParameterizedType) type;
             AnnotatedType[] params = new AnnotatedType[parameterized.getActualTypeArguments().length];
             for (int i = 0; i < params.length; i++) {
-                AnnotatedType param = annotate(parameterized.getActualTypeArguments()[i], expandGenerics, cache);
-                params[i] = updateAnnotations(param, erase(type).getTypeParameters()[i].getAnnotations());
+                params[i] = annotate(parameterized.getActualTypeArguments()[i], expandGenerics, cache);
             }
-            return new AnnotatedParameterizedTypeImpl(parameterized, erase(type).getAnnotations(), params);
+            return new AnnotatedParameterizedTypeImpl(parameterized, new Annotation[0], params);
         }
         if (type instanceof CaptureType) {
             CaptureCacheKey key = new CaptureCacheKey(((CaptureType) type));
@@ -877,7 +876,7 @@ public class GenericTypeReflector {
             AnnotatedType[] upperBounds = stream(wildcard.getUpperBounds())
                     .map(bound -> annotate(bound, expandGenerics, cache))
                     .toArray(AnnotatedType[]::new);
-            return new AnnotatedWildcardTypeImpl(wildcard, erase(type).getAnnotations(), lowerBounds, upperBounds);
+            return new AnnotatedWildcardTypeImpl(wildcard, new Annotation[0], lowerBounds, upperBounds);
         }
         if (type instanceof TypeVariable) {
             return new AnnotatedTypeVariableImpl((TypeVariable<?>) type);
@@ -891,12 +890,12 @@ public class GenericTypeReflector {
             if (clazz.isArray()) {
                 Class componentClass = clazz.getComponentType();
                 return AnnotatedArrayTypeImpl.createArrayType(
-                        new AnnotatedTypeImpl(componentClass, componentClass.getAnnotations()), new Annotation[0]);
+                        new AnnotatedTypeImpl(componentClass, new Annotation[0]), new Annotation[0]);
             }
             if (clazz.getTypeParameters().length > 0 && expandGenerics) {
                 return expandClassGenerics(clazz);
             }
-            return new AnnotatedTypeImpl(clazz, clazz.getAnnotations());
+            return new AnnotatedTypeImpl(clazz, new Annotation[0]);
         }
         throw new IllegalArgumentException("Unrecognized type: " + type.getTypeName());
     }
@@ -1106,7 +1105,7 @@ public class GenericTypeReflector {
     private static AnnotatedParameterizedType expandClassGenerics(Class<?> type) {
         ParameterizedType inner = new ParameterizedTypeImpl(type, type.getTypeParameters(), type.getDeclaringClass());
         AnnotatedType[] params = stream(type.getTypeParameters()).map(GenericTypeReflector::annotate).toArray(AnnotatedType[]::new);
-        return new AnnotatedParameterizedTypeImpl(inner, type.getAnnotations(), params);
+        return new AnnotatedParameterizedTypeImpl(inner, new Annotation[0], params);
     }
 
     /**
