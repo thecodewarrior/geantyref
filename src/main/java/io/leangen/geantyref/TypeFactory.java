@@ -264,6 +264,21 @@ public class TypeFactory {
     }
 
     /**
+     * Creates a wildcard type with arbitrary types. This can be used to make types that aren't valid in 
+     * the Java spec, such as ones with multiple upper and lower bounds.
+     *
+     * @param upperBounds Upper bounds of the wildcard
+     * @param lowerBounds Lower bounds of the wildcard
+     * @return A wildcard type
+     */
+    public static WildcardType wildcardCustom(Type[] upperBounds, Type[] lowerBounds) {
+        if (upperBounds == null || lowerBounds == null) {
+            throw new NullPointerException();
+        }
+        return new WildcardTypeImpl(upperBounds, lowerBounds);
+    }
+
+    /**
      * Creates a wildcard type with an upper bound. <p> For example {@code wildcardExtends(String.class)}
      * returns the type {@code ? extends String}.
      *
