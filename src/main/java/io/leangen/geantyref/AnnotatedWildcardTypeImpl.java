@@ -24,8 +24,7 @@ class AnnotatedWildcardTypeImpl extends AnnotatedTypeImpl implements AnnotatedWi
             lowerBounds = new AnnotatedType[0];
         }
         if (upperBounds == null || upperBounds.length == 0) {
-            upperBounds = new AnnotatedType[1];
-            upperBounds[0] = GenericTypeReflector.annotate(Object.class);
+            upperBounds = new AnnotatedType[0];
         }
         validateBounds(type, lowerBounds, upperBounds);
         this.lowerBounds = lowerBounds;
@@ -71,7 +70,7 @@ class AnnotatedWildcardTypeImpl extends AnnotatedTypeImpl implements AnnotatedWi
         if (type.getLowerBounds().length != lowerBounds.length) {
             throw new IllegalArgumentException("Incompatible lower bounds " + Arrays.toString(lowerBounds) + " for type " + type.toString());
         }
-        if (type.getUpperBounds().length != upperBounds.length) {
+        if (!(upperBounds.length == 0 && type.getUpperBounds().length == 1) && type.getUpperBounds().length != upperBounds.length) {
             throw new IllegalArgumentException("Incompatible upper bounds " + Arrays.toString(upperBounds) + " for type " + type.toString());
         }
         for (int i = 0; i < type.getLowerBounds().length; i++) {
@@ -81,7 +80,7 @@ class AnnotatedWildcardTypeImpl extends AnnotatedTypeImpl implements AnnotatedWi
             }
         }
         for (int i = 0; i < type.getUpperBounds().length; i++) {
-            if (GenericTypeReflector.erase(type.getUpperBounds()[i]) != GenericTypeReflector.erase(upperBounds[i].getType())) {
+            if (upperBounds.length != 0 && GenericTypeReflector.erase(type.getUpperBounds()[i]) != GenericTypeReflector.erase(upperBounds[i].getType())) {
                 throw new IllegalArgumentException("Bound " + upperBounds[i].getType() + " incompatible with "
                         + type.getUpperBounds()[i] + " in type " + type.toString());
             }
